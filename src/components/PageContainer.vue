@@ -6,23 +6,23 @@
     <div
       class="w-full flex justify-center relative items-center"
       :class="{
-        'bg-green-600': state === 'RUNNING',
-        'bg-red-400': state === 'PAUSE',
+        'bg-green-600': !isPaused,
+        'bg-red-400': isPaused,
       }"
     >
-      page={{ page }} {{ state }}
+      page={{ page }} {{ isPaused ? 'PAUSED' : "RUNNING" }}
       <div class="text-xs absolute right-12px">{{ countdown }}/5</div>
     </div>
     <div
-      class="text-150px w-full h-full absolute flex items-center justify-center"
+      class="text-150px w-full h-full absolute flex items-center justify-center pointer-events-none select-none"
     >
-      {{ page }} /{{ total - 1 }}
+      {{ page }}
     </div>
     <div
       v-for="row in 10"
       class="row bg-gray-800 w-full h-full flex items-center p-4 opacity-50"
     >
-      <div class="text-xl font-bold">{{ page * 10 + row }}</div>
+      <div class="text-xl font-bold select-none">{{ page * 10 + row }}</div>
     </div>
   </div>
 </template>
@@ -31,7 +31,7 @@ import { watch, ref, computed } from "vue";
 
 const props = defineProps<{
   page: number;
-  state: "PAUSE" | "RUNNING";
+  isPaused:boolean;
   total: number;
 }>();
 const emits = defineEmits<{
@@ -41,13 +41,13 @@ const emits = defineEmits<{
 let startTime = Date.now();
 const now = ref(Date.now());
 setInterval(() => {
-  if (props.state === "RUNNING") {
+  if (!props.isPaused) {
     now.value = Date.now();
   }
 }, 200);
 const countdown = computed(() => 5 - Math.ceil((now.value - startTime) / 1000));
 watch(
-  () => [props.state, props.page],
+  () => [props.isPaused, props.page],
   () => {
     startTime = Date.now();
   }
