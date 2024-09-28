@@ -8,21 +8,37 @@ class LinkedNode<T> {
 }
 
 
-class LinkedList<T> {
+export class LinkedList<T> {
     // 头指针
     private head: LinkedNode<T> | null = null;
     // 尾指针
     private tail: LinkedNode<T> | null = null;
     // 链表长度
     private length: number = 0;
+    constructor(source: T[] = []) {
+        source.forEach(item => {
+            this.append(item)
+        })
+    }
     append(value: T): void {
         const newNode = new LinkedNode(value);
         // 如果当前尾节点为null，则说明当前链表为空，将头指针和尾指针指向新节点
         if (this.tail === null) {
+            //  头节点 = 尾节点 = 新节点
             this.head = this.tail = newNode
+            // 头节点的next = 头节点
+            this.head.next = this.head
+            // 尾节点的prev = 尾节点
+            this.tail.prev = this.tail
+            // 如果当前尾节点不为null，则说明当前链表不为空
         } else {
+            // 新节点的prev指向尾节点
             newNode.prev = this.tail;
+            // 将尾节点指向新节点 实现头尾相连
+            newNode.next = this.head;
+            // 将尾节点的next指向新节点
             this.tail.next = newNode;
+            // 将尾指针指向新节点
             this.tail = newNode;
         }
         this.length++
@@ -33,6 +49,7 @@ class LinkedList<T> {
         } else {
             const newNode = new LinkedNode(value);
             newNode.next = this.head;
+            newNode.prev = this.tail;
             this.head.prev = newNode;
             this.head = newNode;
             this.length++
@@ -65,9 +82,26 @@ class LinkedList<T> {
             this.head = target!.next
         }
 
+    }
+    [Symbol.iterator]() {
+        let current = this.head
+        let firstPass = true
+        return {
+            next: () => {
+                if (!current || (!firstPass && current === this.tail)) {
+                    return { done: true, value: null }
+                }
+                const value = current.value
+                current = current.next
+                firstPass = false
+                return {
+                    done: false,
+                    value
+                }
 
 
-
+            }
+        }
     }
 
 }

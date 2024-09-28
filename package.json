@@ -12,6 +12,7 @@
   },
   "homepage": "https://HUANGJI97.github.io/sync-page-demo",
   "dependencies": {
+    "es-toolkit": "^1.21.0",
     "vite-plugin-windicss": "^1.9.3",
     "vue": "^3.5.4",
     "vue-route": "^1.5.1",
