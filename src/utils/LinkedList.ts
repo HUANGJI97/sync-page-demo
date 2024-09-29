@@ -13,6 +13,10 @@ export class LinkedList<T> {
     private head: LinkedNode<T> | null = null;
     // 尾指针
     private tail: LinkedNode<T> | null = null;
+    /** 当前游标节点 */
+    public cursor: LinkedNode<T> | null = null;
+    /** 当前游标索引 */
+    public cursorIndex: number = 0;
     // 链表长度
     private length: number = 0;
     constructor(source: T[] = []) {
@@ -20,6 +24,50 @@ export class LinkedList<T> {
             this.append(item)
         })
     }
+    // 获取游标节点的值
+    getCursor(): T | null {
+        return this.cursor ? this.cursor.value : null;
+    }
+    // 将游标设置到指定位置
+    setCursorAt(index: number): T | null {
+        if (index < 0 || index >= this.length) {
+            throw new RangeError("Index out of bounds");
+        }
+
+        let current = this.head;
+        for (let i = 0; i < index; i++) {
+            current = current!.next;
+        }
+        this.cursor = current;
+        this.cursorIndex = index;
+        return this.cursor ? this.cursor.value : null;
+    }
+
+
+    next(): T | null {
+        if (this.cursor.next) {
+            this.cursor = this.cursor.next
+            this.cursorIndex = (this.cursorIndex + 1) % this.length
+        } else {
+            this.cursor = this.head
+            this.cursorIndex = 0
+            return null
+        }
+    }
+    prev() {
+        if (this.cursor.prev) {
+            this.cursor = this.cursor.prev
+            this.cursorIndex = (this.cursorIndex - 1 + this.length) % this.length
+        } else {
+            return null
+        }
+    }
+
+
+    /**
+     * 链表末端插入节点
+     * @param value 
+     */
     append(value: T): void {
         const newNode = new LinkedNode(value);
         // 如果当前尾节点为null，则说明当前链表为空，将头指针和尾指针指向新节点
@@ -30,6 +78,8 @@ export class LinkedList<T> {
             this.head.next = this.head
             // 尾节点的prev = 尾节点
             this.tail.prev = this.tail
+            // 默认将游标设置为头节点
+            this.cursor = this.head
             // 如果当前尾节点不为null，则说明当前链表不为空
         } else {
             // 新节点的prev指向尾节点
@@ -83,6 +133,10 @@ export class LinkedList<T> {
         }
 
     }
+    /**
+     * 迭代方法实现
+     * @returns 
+     */
     [Symbol.iterator]() {
         let current = this.head
         let firstPass = true

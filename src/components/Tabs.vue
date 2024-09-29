@@ -4,7 +4,7 @@
       v-for="(item, index) in items"
       :key="index"
       class="tabs-item"
-      :class="{ active: index === value }"
+      :class="{ active: item.value === value }"
       @click="handleClick(index)"
     >
       {{ item.label }}
@@ -12,9 +12,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-type Item = {
+export type Item = {
   label: string;
-  value: string;
+  value: number;
 };
 const value = defineModel<number>({
   default: 0,
